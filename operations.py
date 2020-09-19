@@ -1,5 +1,6 @@
 import sqlite3
 import os
+# Sql table format: App, File, contents
 
 
 def add_config(app, file, contents):

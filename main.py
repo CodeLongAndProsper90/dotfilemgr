@@ -1,5 +1,6 @@
 import sqlite3
 import os
+exit()
 import argparse
 from operations import *
 parser = argparse.ArgumentParser()
