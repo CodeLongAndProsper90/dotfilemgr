@@ -33,7 +33,7 @@ def get_file(file):
         contents = cur.fetchall()
         db.commit()
         cur.close()
-        return contents
+        return contents[0]
 
 
 def delete_file(file):
@@ -59,10 +59,8 @@ def get_app_config(app):
         results = cur.fetchall()
         cur.close()
         return results
-
-
-def get_all_files():
-    with sqlite3.connect(os.getenv("HOME") + '/.dotfiles.db') as db:
+def get_all_files(app):
+    with sqlite3.connect(os.getenv("HOME"( + '/.dotfiles.db') as db:
         cur = db.cursor()
         cur.execute("SELECT * FROM dotfiles") 
         files = cur.fetchall()

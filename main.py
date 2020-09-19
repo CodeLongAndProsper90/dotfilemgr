@@ -1,4 +1,6 @@
 import sys
+import tarfile
+from pathlib import Path
 import os
 import os.path
 from operations import *
@@ -6,7 +8,7 @@ import pyperclip
 if len(sys.argv) < 2:
     print("Error: Missing command")
     exit(1)
-if sys.argv[1] not in ('add-config', 'get-config', 'update-config', 'remove-config', 'get-app'):
+if sys.argv[1] not in ('add-config', 'get-config', 'update-config', 'remove-config', 'get-app', 'generate-tar'):
     print(f"{sys.argv[1]} is not a valid subcommand")
     exit(1)
 
@@ -66,4 +68,17 @@ elif command == 'get-app':
         print(f"App {args[0]} does not exist, use add-config.")
     for app in get_app_config(args[0]):
         print(app[0])
+elif command == 'generate-tar':
+    files = get_all_files()
+    if not files:
+        print("No files tracked")
+        exit()
+    with tarfile.open(os.getenv('HOME') + '/config.tar', 'w') as tarball:
+
+        for file in files:
+            app, filename, content = file
+            tarball.add(filename)
+
+
+
 
