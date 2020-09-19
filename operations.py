@@ -3,7 +3,6 @@ import os
 # Sql table format: App, File, contents
 
 
-def
 def add_config(app, file, contents):
     # Basic way to add an app config
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
