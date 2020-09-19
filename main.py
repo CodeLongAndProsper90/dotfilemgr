@@ -2,6 +2,7 @@ import sys
 import os
 import os.path
 from operations import *
+import pyperclip
 if len(sys.argv) < 2:
     print("Error: Missing command")
     exit(1)
@@ -37,9 +38,16 @@ elif command == 'update-config':
     if not get_file(args[0]):
         print(f"{args[0]} not tracked, use add-config")
     with open(args[0]) as f:
-        if get_file(args[0]) == f.read():
-            print("Files are the same, not updating")
-            exit()
         update_file(args[0], f.read())
-    print(f"Config updated for {args[0]}")
+        print(f"Config updated for {args[0]}")
 
+elif command == 'get-config':
+    if len(args) == 0:
+        print("Missing filename")
+        exit(1)
+    if not get_file(args[0]):
+        print(f"{args[0]} not tracked")
+    config = get_file(args[0])[0]
+    print(config)
+    pyperclip.copy(config)
+    

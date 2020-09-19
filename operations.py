@@ -20,7 +20,7 @@ def update_file(file, contents):
     # Update config of file -- ignore app
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
-        cur.execute("UPDATE dotfiles SET contents=? WHERE file=?", (file, contents))
+        cur.execute("UPDATE dotfiles SET contents=? WHERE file=?", (contents, file))
         db.commit()
         cur.close()
 
@@ -33,7 +33,7 @@ def get_file(file):
         contents = cur.fetchall()
         db.commit()
         cur.close()
-        return contents
+        return contents[0]
 
 
 def delete_file(file):
