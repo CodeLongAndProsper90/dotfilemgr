@@ -6,7 +6,7 @@ import pyperclip
 if len(sys.argv) < 2:
     print("Error: Missing command")
     exit(1)
-if sys.argv[1] not in ('add-config', 'get-config', 'update-config', 'remove-config'):
+if sys.argv[1] not in ('add-config', 'get-config', 'update-config', 'remove-config', 'get-app'):
     print(f"{sys.argv[1]} is not a valid subcommand")
     exit(1)
 
@@ -56,10 +56,14 @@ elif command == 'remove-config':
         print("Missing filename")
     if not get_file(args[0]):
         print(f"{args[0]} not tracked")
-    delete = input(f"Untrack file {args[0}? (y/N) ").lower() == 'y'
+    delete = input(f"Untrack file {args[0]}? (y/N) ").lower() == 'y'
     if delete:
         delete_file(args[0])
     else:
         print("Aborting.")
-
+elif command == 'get-app':
+    if not app_exists(args[0]):
+        print(f"App {args[0]} does not exist, use add-config.")
+    for app in get_app_config(args[0]):
+        print(app[0])
 

@@ -42,9 +42,20 @@ def delete_file(file):
         cur = db.cursor()
         cur.execute("DELETE FROM dotfiles WHERE file=?", (file,))
 
+def app_exists(app):
+    with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
+        cur = db.cursor()
+        cur.execute("SELECT * FROM dotfiles WHERE app=?", (app,))
+        results = cur.fetchall()
+        cur.close()
+        return bool(results)
+
 
 def get_app_config(app):
     # Get all filenames and content of app
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
-        cur.execute("SELECT file, contents FROM dotfiles WHERE app=?", (app,))
+        cur.execute("SELECT file FROM dotfiles WHERE app=?", (app,))
+        results = cur.fetchall()
+        cur.close()
+        return results
