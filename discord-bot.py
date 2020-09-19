@@ -1,5 +1,12 @@
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
+import os
+
+
+
+load_dotenv()
+token = os.environ['TOKEN']
 
 bot = commands.Bot(command_prefix='.')
 
@@ -23,4 +30,4 @@ async def dotfileupdate(ctx, name, *args):
 async def view(ctx, name):
     pass
 
-bot.run("NzU2OTcyMjk1NDgxODUyMDI3.X2ZnYw.eJoH3mOqSuHK3jNdlqmkiYxrM9M")
+bot.run(token)
