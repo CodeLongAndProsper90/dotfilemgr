@@ -73,11 +73,12 @@ elif command == 'generate-tar':
     if not files:
         print("No files tracked")
         exit()
-    with tarfile.open(os.getenv('HOME') + '/config.tar', 'w') as tarball:
+    with tarfile.open('config.tar', 'w') as tarball:
 
         for file in files:
             app, filename, content = file
-            tarball.add(filename)
+            print(Path(filename).absolute())
+            tarball.add(Path(filename).absolute())
 
 
 
