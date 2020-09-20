@@ -1,10 +1,14 @@
 import sys
 import tarfile
+#  Tarball support
+import subprocess
+#  Github support
 from pathlib import Path
 import os
 import os.path
 from operations import *
 import pyperclip
+
 if len(sys.argv) < 2:
     print("Error: Missing command")
     exit(1)
@@ -79,7 +83,8 @@ elif command == 'generate-tar':
             app, filename, content = file
             print(Path(filename).absolute())
             tarball.add(Path(filename).absolute())
-
-
+elif command == 'sync-gh':
+    if len(args) == 0:
+        print("Missing repo name")
 
 

@@ -1,10 +1,17 @@
 import sqlite3
+Github support
 import os
 # Sql table format: App, File, contents
 
 
 def add_config(app, file, contents):
     # Basic way to add an app config
+    """
+    @param app: Application to link to
+    @param file: Filename to use
+    @param contents: Contents of file, used for restore
+    @desc: Adds the config file @file, with contents @contents under application @app
+    """
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
         cur.execute("SELECT * FROM dotfiles WHERE (app=? AND file=?)", (app, file))
@@ -17,7 +24,12 @@ def add_config(app, file, contents):
 
 
 def update_file(file, contents):
-    # Update config of file -- ignore app
+    """ 
+    @param file: Filename to update, has to be in database
+    @param contents: New contents of @file
+    @desc: Updates the database entry of @file with the new contents @contents
+    @returns: None
+    """ 
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
         cur.execute("UPDATE dotfiles SET contents=? WHERE file=?", (contents, file))
@@ -26,7 +38,11 @@ def update_file(file, contents):
 
 
 def get_file(file):
-    # Get config of file, no app
+    """
+    @param file: Filename to fetch
+    @desc: Get the contents of filename
+    @returns: List of tuples [(contents)+]
+    """
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
         cur.execute('SELECT contents FROM dotfiles WHERE file=?', (file,))
@@ -37,12 +53,21 @@ def get_file(file):
 
 
 def delete_file(file):
-    # remove config file
+    """
+    @param file: Filename to remove.
+    @desc: Untrack file (remove) from database
+    @returns: None
+    """
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
         cur.execute("DELETE FROM dotfiles WHERE file=?", (file,))
 
 def app_exists(app):
+    """
+    @param app: Name of application to search for
+    @desc: Return bool, indicating if the file exists
+    @returns: bool
+    """
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
         cur.execute("SELECT * FROM dotfiles WHERE app=?", (app,))
@@ -52,7 +77,11 @@ def app_exists(app):
 
 
 def get_app_config(app):
-    # Get all filenames and content of app
+    """
+    @param app: Application to select by
+    @desc: Returns a list of files tracked by @app
+    @returns: List of tuples
+    """
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
         cur.execute("SELECT file FROM dotfiles WHERE app=?", (app,))
@@ -62,6 +91,10 @@ def get_app_config(app):
 
 
 def get_all_files():
+    """
+    @desc: Gets all files tracked (in database)
+    @returns: List of tuples
+    """
     with sqlite3.connect(os.getenv("HOME") + '/.dotfiles.db') as db:
         cur = db.cursor()
         cur.execute("SELECT * FROM dotfiles") 
