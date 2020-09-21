@@ -8,7 +8,11 @@ from pathlib import Path
 import os
 import os.path
 from operations import *
-import pyperclip
+try:
+    import pyperclip
+    clip = True
+except:
+    clip = False
 
 if len(sys.argv) < 2:
     print("Error: Missing command")
@@ -31,11 +35,12 @@ if command == 'add-config':
         print(f"{args[1]}: no such file or directory")
     with open(args[1]) as f:
         try:
-            add_config(args[0],str(Path(args[1]).absolute()), f.read())
+            add_config(args[0], str(Path(args[1]).absolute()), f.read())
             print("Added config")
         except:
             raise
-            print("Error: Config already added. Use update-config to update a config file")
+            print(
+                "Error: Config already added. Use update-config to update a config file")
 elif command == 'update-config':
     if len(args) == 0:
         print("Missing filename")
@@ -57,7 +62,8 @@ elif command == 'get-config':
         print(f"{args[0]} not tracked")
     config = get_file(args[0])[0]
     print(config)
-    pyperclip.copy(config)
+    if clip:
+        pyperclip.copy(config)
 
 elif command == 'remove-config':
     if len(args) == 0:
@@ -69,11 +75,15 @@ elif command == 'remove-config':
         delete_file(args[0])
     else:
         print("Aborting.")
+
+
 elif command == 'get-app':
     if not app_exists(args[0]):
         print(f"App {args[0]} does not exist, use add-config.")
     for app in get_app_config(args[0]):
         print(app[0])
+
+
 elif command == 'generate-tar':
     files = get_all_files()
     if not files:
@@ -85,6 +95,7 @@ elif command == 'generate-tar':
             app, filename, content = file
             print(Path(filename).absolute())
             tarball.add(Path(filename).absolute())
+
 elif command == 'sync-gh':
     if len(args) == 0:
         print("Missing repo name")
@@ -93,17 +104,18 @@ elif command == 'sync-gh':
     else:
         url = args[0]
 
-    if not os.path.exists('/tmp/github'):
-        os.mkdir('/tmp/github')
-
+    os.mkdir('/tmp/github')
     os.chdir('/tmp/github')
     files = get_all_files()
     for file in files:
         filename = file[1]
         shutil.copy(filename, './' + filename.split('/')[-1])
+        #  Copy all files to the /tmp/github repo, remove prefixes.
+
     subprocess.run(['git', 'init'])
     subprocess.run(['git', 'add', '.'])
     subprocess.run(['git', 'commit', '-m', '"Sync dotfiles to github"'])
     subprocess.run(['git', 'remote', 'add', 'origin', url])
     subprocess.run(['git', 'push', 'origin', 'master'])
 
+    shutil.rmtree('/tmp/github')
