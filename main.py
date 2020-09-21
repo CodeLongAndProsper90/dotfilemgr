@@ -8,6 +8,7 @@ from pathlib import Path
 import os
 import os.path
 from operations import *
+
 try:
     import pyperclip
     clip = True
@@ -16,9 +17,6 @@ except:
 
 if len(sys.argv) < 2:
     print("Error: Missing command")
-    exit(1)
-if sys.argv[1] not in ('add-config', 'get-config', 'update-config', 'remove-config', 'get-app', 'generate-tar', 'sync-gh'):
-    print(f"{sys.argv[1]} is not a valid subcommand")
     exit(1)
 
 command = sys.argv[1]
@@ -109,7 +107,8 @@ elif command == 'sync-gh':
     files = get_all_files()
     for file in files:
         filename = file[1]
-        shutil.copy(filename, './' + filename.split('/')[-1])
+        shutil.copy(filename, './' +
+                    filename.split(os.path.expanduser('~')[-1]))
         #  Copy all files to the /tmp/github repo, remove prefixes.
 
     subprocess.run(['git', 'init'])
@@ -119,3 +118,23 @@ elif command == 'sync-gh':
     subprocess.run(['git', 'push', 'origin', 'master'])
 
     shutil.rmtree('/tmp/github')
+
+
+elif command == "restore":
+    if len(args) == 0:
+        print("Missing target, please use `file` or `app`")
+        exit(1)
+    if len(args) == 1:
+        print(f"Missing operand for {args[0]}, please correct")
+        exit(1)
+    if args[0].lower() == 'file':
+        file = str(Path(args[1]).absolute())
+        if not get_file(file):
+            print(f"Cannot restore file {args[1]} because it was not tracked.")
+            print("sorry")
+            exit(1)
+        if os.path.exists(args[1]):
+            shutil.copy(args[1], args[1] + '.back')
+            print(f"{args[1]} copied to {args[1]}.back")
+        with Path(file).open('w') as f:
+            f.write(get_file(file)[0][0] + '\n')
