@@ -1,4 +1,5 @@
 import sys
+import shutil
 import tarfile
 #  Tarball support
 import subprocess
@@ -12,7 +13,7 @@ import pyperclip
 if len(sys.argv) < 2:
     print("Error: Missing command")
     exit(1)
-if sys.argv[1] not in ('add-config', 'get-config', 'update-config', 'remove-config', 'get-app', 'generate-tar'):
+if sys.argv[1] not in ('add-config', 'get-config', 'update-config', 'remove-config', 'get-app', 'generate-tar', 'sync-gh'):
     print(f"{sys.argv[1]} is not a valid subcommand")
     exit(1)
 
@@ -30,9 +31,10 @@ if command == 'add-config':
         print(f"{args[1]}: no such file or directory")
     with open(args[1]) as f:
         try:
-            add_config(args[0], args[1], f.read())
+            add_config(args[0],str(Path(args[1]).absolute()), f.read())
             print("Added config")
         except:
+            raise
             print("Error: Config already added. Use update-config to update a config file")
 elif command == 'update-config':
     if len(args) == 0:
@@ -86,5 +88,22 @@ elif command == 'generate-tar':
 elif command == 'sync-gh':
     if len(args) == 0:
         print("Missing repo name")
+    if not args[0].startswith('https://'):
+        url = 'https://github.com/' + args[0]
+    else:
+        url = args[0]
 
+    if not os.path.exists('/tmp/github'):
+        os.mkdir('/tmp/github')
+
+    os.chdir('/tmp/github')
+    files = get_all_files()
+    for file in files:
+        filename = file[1]
+        shutil.copy(filename, './' + filename.split('/')[-1])
+    subprocess.run(['git', 'init'])
+    subprocess.run(['git', 'add', '.'])
+    subprocess.run(['git', 'commit', '-m', '"Sync dotfiles to github"'])
+    subprocess.run(['git', 'remote', 'add', 'origin', url])
+    subprocess.run(['git', 'push', 'origin', 'master'])
 

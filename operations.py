@@ -1,10 +1,9 @@
 import sqlite3
-Github support
 import os
 # Sql table format: App, File, contents
 
 
-def add_config(app, file, contents):
+def add_config(app: str, file: str, contents: str):
     # Basic way to add an app config
     """
     @param app: Application to link to
