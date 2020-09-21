@@ -2,7 +2,17 @@ import sqlite3
 from pathlib import Path
 import os
 import os.path
-# Sql table format: App, File, contents
+"""
+Operations.py
+
+BSD 2-Clause License
+
+Copyright (c) 2020, Scott Little
+All rights reserved.
+
+This file is the basic Python interface to the SQL database.
+
+"""
 
 
 def add_config(app: str, file: str, contents: str):
