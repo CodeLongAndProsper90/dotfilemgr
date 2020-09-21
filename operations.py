@@ -13,11 +13,13 @@ def add_config(app: str, file: str, contents: str):
     """
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
-        cur.execute("SELECT * FROM dotfiles WHERE (app=? AND file=?)", (app, file))
+        cur.execute(
+            "SELECT * FROM dotfiles WHERE (app=? AND file=?)", (app, file))
         if cur.fetchall():
             cur.close()
             raise Exception
-        cur.execute("INSERT INTO dotfiles VALUES (?, ?, ?)", (app, file, contents))
+        cur.execute("INSERT INTO dotfiles VALUES (?, ?, ?)",
+                    (app, file, contents))
         db.commit()
         cur.close()
 
@@ -28,10 +30,11 @@ def update_file(file, contents):
     @param contents: New contents of @file
     @desc: Updates the database entry of @file with the new contents @contents
     @returns: None
-    """ 
+    """
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
-        cur.execute("UPDATE dotfiles SET contents=? WHERE file=?", (contents, file))
+        cur.execute("UPDATE dotfiles SET contents=? WHERE file=?",
+                    (contents, file))
         db.commit()
         cur.close()
 
@@ -60,6 +63,7 @@ def delete_file(file):
     with sqlite3.connect(os.getenv('HOME') + '/.dotfiles.db') as db:
         cur = db.cursor()
         cur.execute("DELETE FROM dotfiles WHERE file=?", (file,))
+
 
 def app_exists(app):
     """
@@ -96,7 +100,25 @@ def get_all_files():
     """
     with sqlite3.connect(os.getenv("HOME") + '/.dotfiles.db') as db:
         cur = db.cursor()
-        cur.execute("SELECT * FROM dotfiles") 
+        cur.execute("SELECT * FROM dotfiles")
         files = cur.fetchall()
         cur.close()
         return files
+
+
+def create_database():
+    """
+    @desc: Create an empty dotfiles database at ~/.dotfiles.db
+    """
+    os.remove(os.getenv("HOME") + './dotfiles.db')
+    with sqlite3.connect(os.getenv("HOME") + '/.dotfiles.db') as db:
+        cur = db.cursor()
+        cur.execute("""
+        CREATE TABLE dotfiles (
+            app TEXT,
+            file TEXT,
+            contents TEXT
+        );
+        """)
+        db.commit()
+        cur.close()
