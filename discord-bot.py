@@ -20,14 +20,15 @@ async def adddotfile(ctx, name, filename, *args):
 
 @bot.command(name='remove')
 async def removedotfile(ctx, name):
-    pass
+    delete_file(name)
 
 @bot.command(name='update')
 async def dotfileupdate(ctx, name, *args):
-    pass
+    update_file(name, ' '.join(args))
+    await ctx.send("file updated")
 
 @bot.command(name='view')
 async def view(ctx, name):
-    pass
+    await ctx.send(get_file(name))
 
 bot.run(token)
