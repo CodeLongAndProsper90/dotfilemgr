@@ -11,13 +11,17 @@ token = os.environ['TOKEN']
 
 bot = commands.Bot(command_prefix='.')
 
+dfmgr = Dotfiles()
+dfmgr.create_database()
+
 @bot.event
 async def on_ready():
     print(f"{bot.user} has logged into Discord")
 
+
 @bot.command(name='add')
 async def adddotfile(ctx, name, filename, *args):
-    add_config(name, filename, ' '.join(args))
+    dfmgr.add_config(name, filename, ' '.join(args))
     await ctx.send("added config")
 
 @bot.command(name='remove')
