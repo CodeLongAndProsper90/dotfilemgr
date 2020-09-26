@@ -3,6 +3,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 import os
 from operations import *
+import operations
 
 
 load_dotenv()
@@ -17,10 +18,12 @@ async def on_ready():
 @bot.command(name='add')
 async def adddotfile(ctx, name, filename, *args):
     add_config(name, filename, ' '.join(args))
+    await ctx.send("added config")
 
 @bot.command(name='remove')
 async def removedotfile(ctx, name):
     delete_file(name)
+    await ctx.send(f"Deleted the file {name}")
 
 @bot.command(name='update')
 async def dotfileupdate(ctx, name, *args):
